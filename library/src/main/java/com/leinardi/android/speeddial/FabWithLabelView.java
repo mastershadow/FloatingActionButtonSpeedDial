@@ -19,6 +19,7 @@ package com.leinardi.android.speeddial;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.ColorStateList;
+import android.content.res.Resources;
 import android.content.res.TypedArray;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
@@ -26,15 +27,18 @@ import android.os.Build;
 import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.view.ContextThemeWrapper;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.ColorInt;
 import androidx.annotation.DrawableRes;
 import androidx.annotation.Nullable;
+import androidx.appcompat.widget.AppCompatTextView;
 import androidx.cardview.widget.CardView;
 import androidx.core.content.res.ResourcesCompat;
 import androidx.core.widget.ImageViewCompat;
@@ -66,6 +70,7 @@ public class FabWithLabelView extends LinearLayout {
     private float mLabelCardViewElevation;
     @Nullable
     private Drawable mLabelCardViewBackground;
+    private final boolean directViewInstancing = true;
 
     public FabWithLabelView(Context context) {
         super(context);
@@ -151,9 +156,23 @@ public class FabWithLabelView extends LinearLayout {
         mSpeedDialActionItem = actionItem;
         if (actionItem.getFabType().equals(SpeedDialActionItem.TYPE_FILL)) {
             this.removeView(mFab);
-            View view = inflate(getContext(), R.layout.sd_fill_fab, this);
-            FloatingActionButton newFab = view.findViewById(R.id.sd_fab_fill);
-            mFab = newFab;
+            if (directViewInstancing) {
+                final float density = getResources().getDisplayMetrics().density;
+                final FloatingActionButton fab = new FloatingActionButton(getContext());
+                fab.setId(R.id.sd_fab_fill);
+                fab.setSize(Math.round(40 * density));
+                fab.setUseCompatPadding(true);
+                fab.setMaxImageSize(Math.round(40 * density));
+
+                final LinearLayout.LayoutParams fabLp = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+                fabLp.gravity = Gravity.CENTER_VERTICAL | Gravity.END;
+                fab.setLayoutParams(fabLp);
+                ((ViewGroup)this).addView(fab);
+                mFab = fab;
+            } else {
+                View view = inflate(getContext(), R.layout.sd_fill_fab, this);
+                mFab = view.findViewById(R.id.sd_fab_fill);
+            }
         }
         setId(actionItem.getId());
         setLabel(actionItem.getLabel(getContext()));
@@ -252,7 +271,47 @@ public class FabWithLabelView extends LinearLayout {
      * @param attrs   attributes.
      */
     private void init(Context context, @Nullable AttributeSet attrs) {
-        View rootView = inflate(context, R.layout.sd_fab_with_label_view, this);
+        View rootView = this;
+        if (directViewInstancing) {
+            ViewGroup vg = (ViewGroup)this;
+            final float density = getResources().getDisplayMetrics().density;
+
+            final CardView cv = new CardView(context);
+            cv.setId(R.id.sd_label_container);
+            cv.setClickable(true);
+            cv.setFocusable(true);
+            cv.setCardElevation(Math.round(1 * density));
+            cv.setRadius(Math.round(4 * density));
+            cv.setContentPadding(Math.round(4 * density), Math.round(4 * density), Math.round(4 * density), Math.round(4 * density));
+            cv.setUseCompatPadding(true);
+            final TypedArray a = context.getTheme().obtainStyledAttributes(R.style.Theme_AppCompat, new int[] { R.attr.selectableItemBackground });
+            int attributeResourceId = a.getResourceId(0, 0);
+            cv.setForeground(ResourcesCompat.getDrawable(getResources(), attributeResourceId, null));
+
+            final LinearLayout.LayoutParams cvLp = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+            cvLp.gravity = Gravity.CENTER_VERTICAL;
+            cv.setLayoutParams(cvLp);
+
+            final AppCompatTextView tv = new AppCompatTextView(new ContextThemeWrapper(context, R.style.SpeedDial_FabLabelStyle), null, 0);
+            tv.setId(R.id.sd_label);
+            final FrameLayout.LayoutParams tvLp = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+            tv.setLayoutParams(tvLp);
+            cv.addView(tv);
+
+            vg.addView(cv);
+
+            final FloatingActionButton fab = new FloatingActionButton(context);
+            fab.setId(R.id.sd_fab);
+            fab.setSize(Math.round(40 * density));
+            fab.setUseCompatPadding(true);
+
+            final LinearLayout.LayoutParams fabLp = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+            fabLp.gravity = Gravity.CENTER_VERTICAL | Gravity.END;
+            fab.setLayoutParams(fabLp);
+            vg.addView(fab);
+        } else {
+            rootView = inflate(context, R.layout.sd_fab_with_label_view, this);
+        }
         rootView.setFocusable(false);
         rootView.setFocusableInTouchMode(false);
       
