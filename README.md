@@ -195,17 +195,17 @@ The `SpeedDialActionItem.Builder` provides several setters to customize the aspe
 ```kotlin
 speedDialView.addActionItem(
     SpeedDialActionItem.Builder(R.id.fab_custom_color, drawable)
-        .setFabBackgroundColor(ResourcesCompat.getColor(getResources(), R.color.material_white_1000, getTheme()))
-        .setFabImageTintColor(ResourcesCompat.getColor(getResources(), R.color.inbox_primary, getTheme()))
+        .setFabBackgroundColor(ResourcesCompat.getColor(resources, R.color.material_white_1000, getTheme()))
+        .setFabImageTintColor(ResourcesCompat.getColor(resources, R.color.inbox_primary, getTheme()))
         .setLabel(getString(R.string.label_custom_color))
         .setLabelColor(Color.WHITE)
-        .setLabelBackgroundColor(ResourcesCompat.getColor(getResources(), R.color.inbox_primary, getTheme()))
+        .setLabelBackgroundColor(ResourcesCompat.getColor(resources, R.color.inbox_primary, getTheme()))
         .setLabelClickable(false)
         .create()
 )
 ```
 
-Is is also possible to specify a theme to easily change the FAB background and ripple effect color:
+It is also possible to specify a theme to easily change the FAB background and ripple effect color:
 
 ```kotlin
 speedDialView.addActionItem(
