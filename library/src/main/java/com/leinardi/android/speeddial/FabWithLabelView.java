@@ -284,7 +284,7 @@ public class FabWithLabelView extends LinearLayout {
             cv.setRadius(Math.round(4 * density));
             cv.setContentPadding(Math.round(4 * density), Math.round(4 * density), Math.round(4 * density), Math.round(4 * density));
             cv.setUseCompatPadding(true);
-            final TypedArray a = context.getTheme().obtainStyledAttributes(R.style.Theme_AppCompat, new int[] { R.attr.selectableItemBackground });
+            final TypedArray a = context.getTheme().obtainStyledAttributes(androidx.appcompat.R.style.Theme_AppCompat, new int[] { com.google.android.material.R.attr.selectableItemBackground });
             int attributeResourceId = a.getResourceId(0, 0);
             cv.setForeground(ResourcesCompat.getDrawable(getResources(), attributeResourceId, null));
 
@@ -449,29 +449,13 @@ public class FabWithLabelView extends LinearLayout {
     private void setLabelBackgroundColor(@ColorInt int color) {
         if (color == Color.TRANSPARENT) {
             mLabelCardView.setCardBackgroundColor(Color.TRANSPARENT);
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                mLabelCardViewElevation = mLabelCardView.getElevation();
-                mLabelCardView.setElevation(0);
-            } else {
-                mLabelCardView.setBackgroundColor(Color.TRANSPARENT);
-                mLabelCardViewBackground = mLabelCardView.getBackground();
-            }
+            mLabelCardViewElevation = mLabelCardView.getElevation();
+            mLabelCardView.setElevation(0);
         } else {
             mLabelCardView.setCardBackgroundColor(ColorStateList.valueOf(color));
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                if (mLabelCardViewElevation != 0) {
-                    mLabelCardView.setElevation(mLabelCardViewElevation);
-                    mLabelCardViewElevation = 0;
-                }
-            } else {
-                if (mLabelCardViewBackground != null) {
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-                        mLabelCardView.setBackground(mLabelCardViewBackground);
-                    } else {
-                        mLabelCardView.setBackgroundDrawable(mLabelCardViewBackground);
-                    }
-                    mLabelCardViewBackground = null;
-                }
+            if (mLabelCardViewElevation != 0) {
+                mLabelCardView.setElevation(mLabelCardViewElevation);
+                mLabelCardViewElevation = 0;
             }
         }
     }

@@ -50,39 +50,21 @@ public class UiUtils {
     }
 
     public static int getPrimaryColor(Context context) {
-        int colorAttr;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            colorAttr = android.R.attr.colorPrimary;
-        } else {
-            //Get colorAccent defined for AppCompat
-            colorAttr = context.getResources().getIdentifier("colorPrimary", "attr", context.getPackageName());
-        }
+        int colorAttr = android.R.attr.colorPrimary;
         TypedValue outValue = new TypedValue();
         context.getTheme().resolveAttribute(colorAttr, outValue, true);
         return outValue.data;
     }
 
     public static int getOnSecondaryColor(Context context) {
-        int colorAttr;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            colorAttr = R.attr.colorOnSecondary;
-        } else {
-            //Get colorAccent defined for AppCompat
-            colorAttr = context.getResources().getIdentifier("colorOnSecondary", "attr", context.getPackageName());
-        }
+        int colorAttr = com.google.android.material.R.attr.colorOnSecondary;
         TypedValue outValue = new TypedValue();
         context.getTheme().resolveAttribute(colorAttr, outValue, true);
         return outValue.data;
     }
 
     public static int getAccentColor(Context context) {
-        int colorAttr;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            colorAttr = android.R.attr.colorAccent;
-        } else {
-            //Get colorAccent defined for AppCompat
-            colorAttr = context.getResources().getIdentifier("colorAccent", "attr", context.getPackageName());
-        }
+        int colorAttr = android.R.attr.colorAccent;
         TypedValue outValue = new TypedValue();
         context.getTheme().resolveAttribute(colorAttr, outValue, true);
         return outValue.data;
@@ -103,10 +85,10 @@ public class UiUtils {
      * @param view view to animate.
      */
     public static void fadeOutAnim(final View view) {
-        ViewCompat.animate(view).cancel();
+        view.animate().cancel();
         view.setAlpha(1F);
         view.setVisibility(VISIBLE);
-        ViewCompat.animate(view)
+        view.animate()
                 .alpha(0F)
                 .withLayer()
                 .setDuration(view.getContext().getResources().getInteger(R.integer.sd_close_animation_duration))
@@ -126,10 +108,10 @@ public class UiUtils {
      * @param view view to animate.
      */
     public static void fadeInAnim(final View view) {
-        ViewCompat.animate(view).cancel();
+        view.animate().cancel();
         view.setAlpha(0);
         view.setVisibility(VISIBLE);
-        ViewCompat.animate(view)
+        view.animate()
                 .alpha(1F)
                 .withLayer()
                 .setDuration(view.getContext().getResources().getInteger(R.integer.sd_open_animation_duration))
@@ -144,7 +126,7 @@ public class UiUtils {
      * @param startOffset a delay in time to start the animation
      */
     public static void enlargeAnim(View view, long startOffset) {
-        ViewCompat.animate(view).cancel();
+        view.animate().cancel();
         view.setVisibility(View.VISIBLE);
         Animation anim = AnimationUtils.loadAnimation(view.getContext(), R.anim.sd_scale_fade_and_translate_in);
         anim.setStartOffset(startOffset);
@@ -158,7 +140,7 @@ public class UiUtils {
      * @param startOffset a delay in time to start the animation
      */
     public static void shrinkAnim(final View view, long startOffset) {
-        ViewCompat.animate(view).cancel();
+        view.animate().cancel();
         view.setVisibility(View.VISIBLE);
         Animation anim = AnimationUtils.loadAnimation(view.getContext(), R.anim.sd_scale_fade_and_translate_out);
         anim.setStartOffset(startOffset);
@@ -186,8 +168,8 @@ public class UiUtils {
      * @param removeView true to remove the view when the animation is over, false otherwise.
      */
     public static void shrinkAnim(final View view, final boolean removeView) {
-        ViewCompat.animate(view).cancel();
-        ViewCompat.animate(view)
+        view.animate().cancel();
+        view.animate()
                 .alpha(0F)
                 .withLayer()
                 .setDuration(view.getContext().getResources().getInteger(R.integer.sd_close_animation_duration))
@@ -216,7 +198,7 @@ public class UiUtils {
      * @see #rotateBackward(View, boolean)
      */
     public static void rotateForward(View view, float angle, boolean animate) {
-        ViewCompat.animate(view)
+        view.animate()
                 .rotation(angle)
                 .withLayer()
                 .setDuration(animate ?
@@ -233,7 +215,7 @@ public class UiUtils {
      * @see #rotateForward(View, float, boolean)
      */
     public static void rotateBackward(View view, boolean animate) {
-        ViewCompat.animate(view)
+        view.animate()
                 .rotation(0.0F)
                 .withLayer()
                 .setDuration(animate ?
@@ -293,11 +275,11 @@ public class UiUtils {
      * Creates a {@link Drawable} from a {@link Bitmap}.
      */
     @Nullable
-    public static Drawable getDrawableFromBitmap(@Nullable Bitmap bitmap) {
+    public static Drawable getDrawableFromBitmap(Resources resources, @Nullable Bitmap bitmap) {
         if (bitmap == null) {
             return null;
         } else {
-            return new BitmapDrawable(bitmap);
+            return new BitmapDrawable(resources, bitmap);
         }
     }
 
@@ -308,19 +290,16 @@ public class UiUtils {
      */
     public static void performTap(final View view) {
         view.setPressed(true);
-        view.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                view.setPressed(false);
-                view.performClick();
-            }
+        view.postDelayed(() -> {
+            view.setPressed(false);
+            view.performClick();
         }, ViewConfiguration.getTapTimeout());
     }
 
     /**
      * Crop the image into a circle
      */
-    public static Drawable cropFabImageInCircle(Drawable fabIcon) {
+    public static Drawable cropFabImageInCircle(Resources resources, Drawable fabIcon) {
         Bitmap bitmap = UiUtils.getBitmapFromDrawable(fabIcon);
         if (bitmap == null) {
             Log.e(TAG, "Couldn't crop the Image");
@@ -343,11 +322,6 @@ public class UiUtils {
         int circleCenter = bitmap.getWidth() / 2;
         Canvas canvas = new Canvas(circleBitmap);
         canvas.drawCircle(circleCenter, circleCenter, circleCenter, paint);
-        Drawable cropped = UiUtils.getDrawableFromBitmap(circleBitmap);
-        if (cropped == null) {
-            Log.e(TAG, "Couldn't crop the Image");
-            return fabIcon;
-        }
-        return cropped;
+        return UiUtils.getDrawableFromBitmap(resources, circleBitmap);
     }
 }

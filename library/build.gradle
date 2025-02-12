@@ -1,3 +1,5 @@
+import net.ltgt.gradle.errorprone.CheckSeverity
+
 /*
  * Copyright 2020 Roberto Leinardi.
  *
@@ -13,10 +15,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-apply plugin: 'com.android.library'
-apply from: rootProject.file('checkstyle.gradle')
-apply plugin: 'net.ltgt.errorprone'
+plugins {
+id 'com.android.library'
+id 'net.ltgt.errorprone'
+    }
 
 ext {
     PUBLISH_GROUP_ID = 'com.leinardi.android'
@@ -27,14 +29,19 @@ ext {
 apply from: 'publish-module.gradle'
 
 android {
-    compileSdkVersion build_versions.target_sdk
+    namespace = 'com.leinardi.android.speeddial'
 
     defaultConfig {
-        minSdkVersion build_versions.min_sdk
-        targetSdkVersion build_versions.target_sdk
+        compileSdk build_versions.target_sdk
+        minSdk build_versions.min_sdk
+        targetSdk build_versions.target_sdk
         consumerProguardFiles 'consumer-proguard-rules.pro'
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
+    }
+
+    buildFeatures {
+        buildConfig true
     }
 
     compileOptions {
@@ -43,17 +50,19 @@ android {
     }
 }
 
-tasks.withType(JavaCompile) {
+tasks.withType(JavaCompile).configureEach {
     // remove the if condition if you want to run NullAway on test code
     if (!name.toLowerCase().contains("test")) {
         options.errorprone {
-            check("NullAway", net.ltgt.gradle.errorprone.CheckSeverity.ERROR)
+            check("NullAway", CheckSeverity.ERROR)
             option("NullAway:AnnotatedPackages", "com.leinardi.android.speeddial")
         }
     }
 }
 
 dependencies {
+    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.1.4")
+
     api "androidx.appcompat:appcompat:$versions.androidx_appcompat"
     api "com.google.android.material:material:$versions.android_material"
     api "androidx.cardview:cardview:$versions.androidx_cardview"

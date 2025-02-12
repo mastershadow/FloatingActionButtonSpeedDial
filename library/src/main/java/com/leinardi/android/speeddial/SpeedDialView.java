@@ -247,7 +247,7 @@ public class SpeedDialView extends LinearLayout implements CoordinatorLayout.Att
         if (isOpen()) {
             close();
             // Workaround for mMainFab.hide() breaking the rotate anim
-            ViewCompat.animate(mMainFab).rotation(0).setDuration(0).start();
+            mMainFab.animate().rotation(0).setDuration(0).start();
         }
         mMainFab.hide(new OnVisibilityChangedListener() {
             @Override
@@ -962,11 +962,11 @@ public class SpeedDialView extends LinearLayout implements CoordinatorLayout.Att
     }
 
     private void showWithAnimationFabWithLabelView(FabWithLabelView fabWithLabelView, int delay) {
-        ViewCompat.animate(fabWithLabelView).cancel();
+        fabWithLabelView.animate().cancel();
         UiUtils.enlargeAnim(fabWithLabelView.getFab(), delay);
         if (fabWithLabelView.isLabelEnabled()) {
             CardView labelBackground = fabWithLabelView.getLabelBackground();
-            ViewCompat.animate(labelBackground).cancel();
+            labelBackground.animate().cancel();
             Animation animation = AnimationUtils.loadAnimation(getContext(), R.anim.sd_fade_and_translate_in);
             animation.setStartOffset(delay);
             labelBackground.startAnimation(animation);
@@ -974,11 +974,11 @@ public class SpeedDialView extends LinearLayout implements CoordinatorLayout.Att
     }
 
     private void hideWithAnimationFabWithLabelView(final FabWithLabelView fabWithLabelView, int delay) {
-        ViewCompat.animate(fabWithLabelView).cancel();
+        fabWithLabelView.animate().cancel();
         UiUtils.shrinkAnim(fabWithLabelView.getFab(), delay);
         if (fabWithLabelView.isLabelEnabled()) {
             final CardView labelBackground = fabWithLabelView.getLabelBackground();
-            ViewCompat.animate(labelBackground).cancel();
+            labelBackground.animate().cancel();
             Animation animation = AnimationUtils.loadAnimation(getContext(), R.anim.sd_fade_and_translate_out);
             animation.setAnimationListener(new Animation.AnimationListener() {
                 @Override
@@ -1125,9 +1125,9 @@ public class SpeedDialView extends LinearLayout implements CoordinatorLayout.Att
         public SnackbarBehavior(Context context, AttributeSet attrs) {
             super(context, attrs);
             TypedArray a = context.obtainStyledAttributes(attrs,
-                    R.styleable.FloatingActionButton_Behavior_Layout);
+                    com.google.android.material.R.styleable.FloatingActionButton_Behavior_Layout);
             mAutoHideEnabled = a.getBoolean(
-                    R.styleable.FloatingActionButton_Behavior_Layout_behavior_autoHide,
+                    com.google.android.material.R.styleable.FloatingActionButton_Behavior_Layout_behavior_autoHide,
                     AUTO_HIDE_DEFAULT);
             a.recycle();
         }
@@ -1281,12 +1281,12 @@ public class SpeedDialView extends LinearLayout implements CoordinatorLayout.Att
         }
 
         private int getMinimumHeightForVisibleOverlappingContent(AppBarLayout appBarLayout) {
-            int minHeight = ViewCompat.getMinimumHeight(appBarLayout);
+            int minHeight = appBarLayout.getMinimumHeight();
             if (minHeight != 0) {
                 return minHeight * 2;
             } else {
                 int childCount = appBarLayout.getChildCount();
-                return childCount >= 1 ? ViewCompat.getMinimumHeight(appBarLayout.getChildAt(childCount - 1)) * 2 : 0;
+                return childCount >= 1 ? appBarLayout.getChildAt(childCount - 1).getMinimumHeight() * 2 : 0;
             }
         }
 

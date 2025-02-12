@@ -14,27 +14,39 @@
  * limitations under the License.
  */
 
-apply plugin: 'com.android.application'
-apply plugin: 'kotlin-android'
-apply plugin: 'kotlin-android-extensions'
-apply from: rootProject.file('checkstyle.gradle')
+plugins {
+    id 'com.android.application'
+    id 'kotlin-android'
+    id 'kotlin-parcelize'
+}
+
 
 android {
-    compileSdkVersion build_versions.target_sdk
+    namespace = "com.leinardi.android.speeddial.sample"
 
     defaultConfig {
         applicationId "com.leinardi.android.speeddial.sample"
-        minSdkVersion build_versions.min_sdk
-        targetSdkVersion build_versions.target_sdk
+        compileSdk build_versions.target_sdk
+        minSdk build_versions.min_sdk
+        targetSdk build_versions.target_sdk
+
         versionCode build_versions.version_code
         versionName build_versions.version_name
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
     }
 
+    buildFeatures {
+        buildConfig true
+    }
+
     compileOptions {
         sourceCompatibility build_versions.java_version
         targetCompatibility build_versions.java_version
+    }
+
+    kotlinOptions {
+        jvmTarget = "$build_versions.java_version"
     }
 
     def isKeystoreInfoAvailable = file(KEYSTORE_PATH).exists() && file(KEYSTORE_PROPERTIES_PATH).exists()
@@ -70,8 +82,6 @@ android {
 
 dependencies {
     implementation project(':library')
-//    implementation "com.leinardi.android:speed-dial:${build_versions.version_name}"
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$versions.kotlin"
     implementation "androidx.appcompat:appcompat:$versions.androidx_appcompat"
     implementation "androidx.recyclerview:recyclerview:$versions.androidx_recyclerview"
     implementation "androidx.constraintlayout:constraintlayout:$versions.androidx_constraintlayout"

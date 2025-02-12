@@ -48,7 +48,7 @@ class CustomAdapter(private val dataSet: Array<String>) : RecyclerView.Adapter<C
 
         init {
             // Define click listener for the ViewHolder's View.
-            v.setOnClickListener { Log.d(TAG, "Element $adapterPosition clicked.") }
+            v.setOnClickListener { Log.d(TAG, "Element $bindingAdapterPosition clicked.") }
             textView = v.findViewById(R.id.textView)
         }
     }

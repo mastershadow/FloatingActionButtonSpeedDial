@@ -17,7 +17,6 @@ apply plugin: 'org.jetbrains.dokka'
 apply from: rootProject.file('versions-plugin.gradle')
 apply from: rootProject.file('detekt.gradle')
 apply from: rootProject.file('publish-root.gradle')
-apply plugin: "se.bjurr.violations.violation-comments-to-github-gradle-plugin"
 
 buildscript {
     repositories {
@@ -27,7 +26,6 @@ buildscript {
     dependencies {
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$versions.kotlin"
         classpath "com.android.tools.build:gradle:$versions.android_gradle_plugin"
-        classpath "com.leinardi.android:android-checkstyle-plugin:$versions.android_checkstyle_plugin"
         classpath "org.jetbrains.dokka:dokka-gradle-plugin:$versions.dokka"
         classpath "io.github.gradle-nexus:publish-plugin:$versions.publish_plugin"
         classpath "com.github.ben-manes:gradle-versions-plugin:$versions.gradle_versions_plugin"
@@ -39,8 +37,10 @@ buildscript {
 
 allprojects {
     gradle.projectsEvaluated {
-        tasks.withType(JavaCompile) {
-            options.compilerArgs << "-Xlint:unchecked" << "-Xlint:deprecation"
+        tasks.withType(JavaCompile).tap {
+            configureEach {
+                options.compilerArgs << "-Xlint:unchecked" << "-Xlint:deprecation"
+            }
         }
     }
     repositories {
