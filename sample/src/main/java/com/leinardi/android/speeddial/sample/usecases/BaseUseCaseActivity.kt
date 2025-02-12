@@ -109,6 +109,9 @@ abstract class BaseUseCaseActivity : AppCompatActivity() {
                             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
                         }
                     }
+                    R.id.action_toggle_focus_first -> {
+                        speedDialView.focusFirstActionItem = !speedDialView.focusFirstActionItem
+                    }
                     R.id.action_main_fab_background_color_closed_primary ->
                         speedDialView.mainFabClosedBackgroundColor = UiUtils.getPrimaryColor(
                                 this@BaseUseCaseActivity)

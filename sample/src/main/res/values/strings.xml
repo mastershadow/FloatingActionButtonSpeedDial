@@ -50,4 +50,5 @@
     <string name="use_case_1">Minimal setup</string>
     <string name="white">White</string>
     <string name="zero_degrees">0 degrees</string>
+    <string name="action_toggle_focus_first">Toggle focus first item</string>
 </resources>

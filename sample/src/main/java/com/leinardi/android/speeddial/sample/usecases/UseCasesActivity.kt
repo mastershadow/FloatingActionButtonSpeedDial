@@ -28,7 +28,7 @@ class UseCasesActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_use_cases)
-        setSupportActionBar(findViewById<Toolbar>(R.id.toolbar))
+        setSupportActionBar(findViewById(R.id.toolbar))
         val speedDialView = findViewById<SpeedDialView>(R.id.speedDial)
         speedDialView.inflate(R.menu.menu_use_cases)
         speedDialView.open()

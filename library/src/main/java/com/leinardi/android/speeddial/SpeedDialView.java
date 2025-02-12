@@ -51,7 +51,6 @@ import androidx.appcompat.content.res.AppCompatResources;
 import androidx.appcompat.widget.PopupMenu;
 import androidx.cardview.widget.CardView;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
-import androidx.core.view.ViewCompat;
 import androidx.core.widget.ImageViewCompat;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.vectordrawable.graphics.drawable.AnimatedVectorDrawableCompat;
@@ -142,6 +141,14 @@ public class SpeedDialView extends LinearLayout implements CoordinatorLayout.Att
         mInstanceState.mUseReverseAnimationOnClose = useReverseAnimation;
     }
 
+    public boolean getFocusFirstActionItem() {
+        return mInstanceState.mFocusFirstActionItem;
+    }
+
+    public void setFocusFirstActionItem(boolean focusFirstActionItem) {
+        mInstanceState.mFocusFirstActionItem = focusFirstActionItem;
+    }
+
     @ExpansionMode
     public int getExpansionMode() {
         return mInstanceState.mExpansionMode;
@@ -203,8 +210,13 @@ public class SpeedDialView extends LinearLayout implements CoordinatorLayout.Att
                     Field declaredField = fab.getClass().getDeclaredField("impl");
                     declaredField.setAccessible(true);
                     Object impl = declaredField.get(fab);
-                    Class implClass = Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP
-                            ? impl.getClass().getSuperclass() : impl.getClass();
+                    if (impl == null) {
+                        return;
+                    }
+                    Class<?> implClass = impl.getClass().getSuperclass();
+                    if (implClass == null) {
+                        return;
+                    }
                     Method scale = implClass.getDeclaredMethod("setImageMatrixScale", Float.TYPE);
                     scale.setAccessible(true);
                     scale.invoke(impl, 1.0F);
@@ -522,11 +534,11 @@ public class SpeedDialView extends LinearLayout implements CoordinatorLayout.Att
      * Opens speed dial menu.
      */
     public void open() {
-        toggle(true, true);
+        toggle(true, true, getFocusFirstActionItem());
     }
 
     public void open(boolean animate) {
-        toggle(true, animate);
+        toggle(true, animate, getFocusFirstActionItem());
     }
 
     public void open(boolean animate, boolean focusFirst) {
@@ -652,8 +664,7 @@ public class SpeedDialView extends LinearLayout implements CoordinatorLayout.Att
 
     @Override
     protected void onRestoreInstanceState(Parcelable state) {
-        if (state instanceof Bundle) {
-            Bundle bundle = (Bundle) state;
+        if (state instanceof Bundle bundle) {
             InstanceState instanceState = bundle.getParcelable(InstanceState.class.getName());
             if (instanceState != null
                     && instanceState.mSpeedDialActionItems != null
@@ -726,9 +737,7 @@ public class SpeedDialView extends LinearLayout implements CoordinatorLayout.Att
         mMainFab = createMainFab();
         addView(mMainFab);
         setClipChildren(false);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            setElevation(getResources().getDimension(R.dimen.sd_close_elevation));
-        }
+        setElevation(getResources().getDimension(R.dimen.sd_close_elevation));
         TypedArray styledAttrs = context.obtainStyledAttributes(attrs, R.styleable.SpeedDialView, 0, 0);
         try {
             setEnabled(styledAttrs.getBoolean(R.styleable.SpeedDialView_android_enabled, isEnabled()));
@@ -784,23 +793,20 @@ public class SpeedDialView extends LinearLayout implements CoordinatorLayout.Att
         floatingActionButton.setFocusable(true);
         floatingActionButton.setSize(FloatingActionButton.SIZE_NORMAL);
         floatingActionButton.setContentDescription(getContentDescription());
-        floatingActionButton.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(final View view) {
-                if (isOpen()) {
-                    if (mOnChangeListener == null || !mOnChangeListener.onMainActionSelected()) {
-                        close();
-                    }
-                } else {
-                    open();
+        floatingActionButton.setOnClickListener(view -> {
+            if (isOpen()) {
+                if (mOnChangeListener == null || !mOnChangeListener.onMainActionSelected()) {
+                    close();
                 }
+            } else {
+                open();
             }
         });
         return floatingActionButton;
     }
 
     private void toggle(boolean show, boolean animate) {
-        this.toggle(show, animate, true);
+        this.toggle(show, animate, getFocusFirstActionItem());
     }
 
     private void toggle(boolean show, boolean animate, boolean focusFirst) {
@@ -830,14 +836,9 @@ public class SpeedDialView extends LinearLayout implements CoordinatorLayout.Att
                 // This is a workaround. I don't know why I can't set the rotated bitmap with `setImageBitmap`
                 // after set directly the rotated Drawable with `setImageDrawable`
                 // on Android API 25 or lower (works on API 26 or higher).
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N &&
-                        mMainFabOpenedDrawable instanceof AnimatedVectorDrawable) {
+                if (mMainFabOpenedDrawable instanceof AnimatedVectorDrawable) {
                     mMainFab.setImageDrawable(mMainFabOpenedDrawable);
                     ((AnimatedVectorDrawable) mMainFabOpenedDrawable).start();
-                } else if (Build.VERSION.SDK_INT < Build.VERSION_CODES.N &&
-                        mMainFabOpenedDrawable instanceof AnimatedVectorDrawableCompat) {
-                    mMainFab.setImageDrawable(mMainFabOpenedDrawable);
-                    ((AnimatedVectorDrawableCompat) mMainFabOpenedDrawable).start();
                 } else if (mMainFabOpenedDrawable instanceof AnimationDrawable) {
                     mMainFab.setImageDrawable(mMainFabOpenedDrawable);
                     ((AnimationDrawable) mMainFabOpenedDrawable).start();
@@ -856,12 +857,8 @@ public class SpeedDialView extends LinearLayout implements CoordinatorLayout.Att
             mMainFab.setImageDrawable(mMainFabClosedDrawable);
             if (mMainFabClosedDrawable != null) {
 
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N &&
-                        mMainFabClosedDrawable instanceof AnimatedVectorDrawable) {
+                if (mMainFabClosedDrawable instanceof AnimatedVectorDrawable) {
                     ((AnimatedVectorDrawable) mMainFabClosedDrawable).start();
-                } else if (Build.VERSION.SDK_INT < Build.VERSION_CODES.N &&
-                        mMainFabClosedDrawable instanceof AnimatedVectorDrawableCompat) {
-                    ((AnimatedVectorDrawableCompat) mMainFabClosedDrawable).start();
                 } else if (mMainFabClosedDrawable instanceof AnimationDrawable) {
                     ((AnimationDrawable) mMainFabClosedDrawable).start();
                 }
@@ -897,15 +894,9 @@ public class SpeedDialView extends LinearLayout implements CoordinatorLayout.Att
 
     private void updateElevation() {
         if (isOpen()) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                setElevation(getResources().getDimension(R.dimen.sd_open_elevation));
-            } else {
-                bringToFront();
-            }
+            setElevation(getResources().getDimension(R.dimen.sd_open_elevation));
         } else {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                setElevation(getResources().getDimension(R.dimen.sd_close_elevation));
-            }
+            setElevation(getResources().getDimension(R.dimen.sd_close_elevation));
         }
     }
 
@@ -1069,6 +1060,7 @@ public class SpeedDialView extends LinearLayout implements CoordinatorLayout.Att
         private int mExpansionMode = TOP;
         private float mMainFabAnimationRotateAngle = DEFAULT_ROTATE_ANGLE;
         private boolean mUseReverseAnimationOnClose = false;
+        private boolean mFocusFirstActionItem = true;
         private ArrayList<SpeedDialActionItem> mSpeedDialActionItems = new ArrayList<>();
 
         @Override
@@ -1086,6 +1078,7 @@ public class SpeedDialView extends LinearLayout implements CoordinatorLayout.Att
             dest.writeInt(this.mExpansionMode);
             dest.writeFloat(this.mMainFabAnimationRotateAngle);
             dest.writeByte(this.mUseReverseAnimationOnClose ? (byte) 1 : (byte) 0);
+            dest.writeByte(this.mFocusFirstActionItem ? (byte) 1 : (byte) 0);
             dest.writeTypedList(this.mSpeedDialActionItems);
         }
 
@@ -1101,10 +1094,11 @@ public class SpeedDialView extends LinearLayout implements CoordinatorLayout.Att
             this.mExpansionMode = in.readInt();
             this.mMainFabAnimationRotateAngle = in.readFloat();
             this.mUseReverseAnimationOnClose = in.readByte() != 0;
+            this.mFocusFirstActionItem = in.readByte() != 0;
             this.mSpeedDialActionItems = in.createTypedArrayList(SpeedDialActionItem.CREATOR);
         }
 
-        public static final Creator<InstanceState> CREATOR = new Creator<InstanceState>() {
+        public static final Creator<InstanceState> CREATOR = new Creator<>() {
             @Override
             public InstanceState createFromParcel(Parcel source) {
                 return new InstanceState(source);
