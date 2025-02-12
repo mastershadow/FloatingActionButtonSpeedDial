@@ -529,6 +529,10 @@ public class SpeedDialView extends LinearLayout implements CoordinatorLayout.Att
         toggle(true, animate);
     }
 
+    public void open(boolean animate, boolean focusFirst) {
+        toggle(true, animate, focusFirst);
+    }
+
     /**
      * Closes speed dial menu.
      */
@@ -796,6 +800,10 @@ public class SpeedDialView extends LinearLayout implements CoordinatorLayout.Att
     }
 
     private void toggle(boolean show, boolean animate) {
+        this.toggle(show, animate, true);
+    }
+
+    private void toggle(boolean show, boolean animate, boolean focusFirst) {
         if (show && mFabWithLabelViews.isEmpty()) {
             show = false;
             if (mOnChangeListener != null) {
@@ -806,7 +814,7 @@ public class SpeedDialView extends LinearLayout implements CoordinatorLayout.Att
             return;
         }
         mInstanceState.mIsOpen = show;
-        visibilitySetup(show, animate, mInstanceState.mUseReverseAnimationOnClose);
+        visibilitySetup(show, animate, mInstanceState.mUseReverseAnimationOnClose, focusFirst);
         updateMainFabDrawable(animate);
         updateMainFabBackgroundColor();
         updateMainFabIconColor();
@@ -925,6 +933,13 @@ public class SpeedDialView extends LinearLayout implements CoordinatorLayout.Att
      * Set menus visibility (visible or invisible).
      */
     private void visibilitySetup(boolean visible, boolean animate, boolean reverseAnimation) {
+        visibilitySetup(visible, animate, reverseAnimation, true);
+    }
+
+    /**
+     * Set menus visibility (visible or invisible).
+     */
+    private void visibilitySetup(boolean visible, boolean animate, boolean reverseAnimation, boolean focusFirst) {
         int size = mFabWithLabelViews.size();
         if (visible) {
             for (int i = 0; i < size; i++) {
@@ -934,7 +949,7 @@ public class SpeedDialView extends LinearLayout implements CoordinatorLayout.Att
                 if (animate) {
                     showWithAnimationFabWithLabelView(fabWithLabelView, i * ACTION_ANIM_DELAY);
                 }
-                if (i == 0) {
+                if (i == 0 && focusFirst) {
                     fabWithLabelView.getFab().requestFocusFromTouch();
                 }
                 if (i == size - 1) {
