@@ -41,7 +41,7 @@ android {
     }
 
     buildFeatures {
-        buildConfig true
+        buildConfig = true
     }
 
     compileOptions {
@@ -61,7 +61,7 @@ tasks.withType(JavaCompile).configureEach {
 }
 
 dependencies {
-    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.1.4")
+    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.1.5")
 
     api "androidx.appcompat:appcompat:$versions.androidx_appcompat"
     api "com.google.android.material:material:$versions.android_material"

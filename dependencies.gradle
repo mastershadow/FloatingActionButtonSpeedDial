@@ -21,11 +21,11 @@
 ext.deps = [:]
 def versions = [:]
 versions.android_checkstyle_plugin = "1.1.0"
-versions.android_gradle_plugin = "8.8.0"
-versions.android_material = "1.12.0"
-versions.androidx_appcompat = "1.7.0"
+versions.android_gradle_plugin = "8.13.2"
+versions.android_material = "1.13.0"
+versions.androidx_appcompat = "1.7.1"
 versions.androidx_cardview = "1.0.0"
-versions.androidx_constraintlayout = "2.2.0"
+versions.androidx_constraintlayout = "2.2.1"
 versions.androidx_recyclerview = "1.4.0"
 versions.detekt = "1.23.7"
 versions.dokka = "1.9.20"
@@ -43,10 +43,10 @@ ext.versions = versions
 def commitCount = 'git rev-list --count HEAD'.execute().text.trim()
 def build_versions = [:]
 build_versions.min_sdk = 28
-build_versions.target_sdk = 35
+build_versions.target_sdk = 36
 build_versions.java_version = JavaVersion.VERSION_17
 build_versions.version_code = commitCount.isNumber() ? commitCount as int : 0
-build_versions.version_name = "3.2.1-er"
+build_versions.version_name = "3.2.2-er"
 ext.build_versions = build_versions
 
 

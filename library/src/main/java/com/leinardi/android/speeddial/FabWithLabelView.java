@@ -284,7 +284,7 @@ public class FabWithLabelView extends LinearLayout {
             cv.setRadius(Math.round(4 * density));
             cv.setContentPadding(Math.round(4 * density), Math.round(4 * density), Math.round(4 * density), Math.round(4 * density));
             cv.setUseCompatPadding(true);
-            final TypedArray a = context.getTheme().obtainStyledAttributes(androidx.appcompat.R.style.Theme_AppCompat, new int[] { com.google.android.material.R.attr.selectableItemBackground });
+            final TypedArray a = context.getTheme().obtainStyledAttributes(androidx.appcompat.R.style.Theme_AppCompat, new int[] { androidx.appcompat.R.attr.selectableItemBackground });
             int attributeResourceId = a.getResourceId(0, 0);
             cv.setForeground(ResourcesCompat.getDrawable(getResources(), attributeResourceId, null));
 

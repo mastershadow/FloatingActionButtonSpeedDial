@@ -1,5 +1,8 @@
+import se.bjurr.violations.comments.github.plugin.gradle.ViolationCommentsToGitHubTask
+
 /*
  * Copyright 2020 Roberto Leinardi.
+ * Copyright 2024-2026 Eduard Roccatello.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -48,11 +51,11 @@ allprojects {
     }
 }
 
-task clean(type: Delete) {
-    delete rootProject.buildDir
+tasks.register('clean', Delete) {
+    delete rootProject.layout.buildDirectory
 }
 
-task violationCommentsToGitHub(type: se.bjurr.violations.comments.github.plugin.gradle.ViolationCommentsToGitHubTask) {
+tasks.register('violationCommentsToGitHub', ViolationCommentsToGitHubTask) {
     repositoryOwner = "leinardi"
     repositoryName = "FloatingActionButtonSpeedDial"
     pullRequestId = System.properties['GITHUB_PULLREQUESTID']

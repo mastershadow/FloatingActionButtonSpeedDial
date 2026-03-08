@@ -136,6 +136,7 @@ class MainActivity : BaseUseCaseActivity() {
         return true
     }
 
+    @Deprecated("Migrate to AndroidX's backward compatible OnBackPressedDispatcher")
     override fun onBackPressed() {
         // Closes menu if its opened.
         if (speedDialView.isOpen) {

@@ -26,6 +26,6 @@ dependencies {
     detektPlugins "io.gitlab.arturbosch.detekt:detekt-formatting:${versions.detekt}"
 }
 
-tasks.getByName('detekt') {
+tasks.named('detekt') {
     exclude("**/build/generated/**")
 }

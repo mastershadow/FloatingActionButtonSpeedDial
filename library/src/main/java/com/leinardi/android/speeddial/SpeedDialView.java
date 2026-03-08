@@ -1351,10 +1351,8 @@ public class SpeedDialView extends LinearLayout implements CoordinatorLayout.Att
         }
 
         @Override
-        public void onNestedScroll(@NonNull CoordinatorLayout coordinatorLayout, @NonNull View child, @NonNull View
-                target, int dxConsumed, int dyConsumed, int dxUnconsumed, int dyUnconsumed, int type) {
-            super.onNestedScroll(coordinatorLayout, child, target, dxConsumed, dyConsumed, dxUnconsumed, dyUnconsumed,
-                    type);
+        public void onNestedScroll(@NonNull CoordinatorLayout coordinatorLayout, @NonNull View child, @NonNull View target, int dxConsumed, int dyConsumed, int dxUnconsumed, int dyUnconsumed, int type, @NonNull int[] consumed) {
+            super.onNestedScroll(coordinatorLayout, child, target, dxConsumed, dyConsumed, dxUnconsumed, dyUnconsumed, type, consumed);
             mWasShownAlready = false;
             if (dyConsumed > 0 && child.getVisibility() == View.VISIBLE) {
                 hide(child);

@@ -49,3 +49,4 @@ captures/
 
 keystore/
 .gitmodules
+/gradle/gradle-daemon-jvm.properties
