@@ -213,15 +213,12 @@ public class SpeedDialView extends LinearLayout implements CoordinatorLayout.Att
                     if (impl == null) {
                         return;
                     }
-                    Class<?> implClass = impl.getClass().getSuperclass();
-                    if (implClass == null) {
+                    Method scale = findMethod(impl.getClass(), "setImageMatrixScale", Float.TYPE);
+                    if (scale == null) {
                         return;
                     }
-                    Method scale = implClass.getDeclaredMethod("setImageMatrixScale", Float.TYPE);
                     scale.setAccessible(true);
                     scale.invoke(impl, 1.0F);
-                } catch (NoSuchMethodException e) {
-                    Log.e(TAG, "Method setImageMatrixScale not found", e);
                 } catch (IllegalAccessException e) {
                     Log.e(TAG, "IllegalAccessException", e);
                 } catch (InvocationTargetException e) {
@@ -1369,5 +1366,16 @@ public class SpeedDialView extends LinearLayout implements CoordinatorLayout.Att
         public NoBehavior(Context context, AttributeSet attrs) {
             super(context, attrs);
         }
+    }
+
+    private static Method findMethod(Class<?> clazz, String name, Class<?>... paramTypes) {
+        while (clazz != null && clazz != Object.class) {
+            try {
+                return clazz.getDeclaredMethod(name, paramTypes);
+            } catch (NoSuchMethodException ignored) {
+            }
+            clazz = clazz.getSuperclass();
+        }
+        return null;
     }
 }

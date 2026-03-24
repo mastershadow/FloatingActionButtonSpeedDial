@@ -42,7 +42,7 @@ public class SpeedDialActionItem implements Parcelable {
     public static final int RESOURCE_NOT_SET = Integer.MIN_VALUE;
 
     @StringDef({TYPE_NORMAL, TYPE_FILL})
-    @Retention(RetentionPolicy.RUNTIME)
+    @Retention(RetentionPolicy.SOURCE)
     public @interface FabType { };
     public static final String TYPE_NORMAL = "normal";
     public static final String TYPE_FILL = "fill";

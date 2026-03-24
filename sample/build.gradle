@@ -16,10 +16,8 @@
 
 plugins {
     id 'com.android.application'
-    id 'kotlin-android'
     id 'kotlin-parcelize'
 }
-
 
 android {
     namespace = "com.leinardi.android.speeddial.sample"
@@ -45,8 +43,10 @@ android {
         targetCompatibility build_versions.java_version
     }
 
-    kotlinOptions {
-        jvmTarget = "$build_versions.java_version"
+    kotlin {
+        jvmToolchain {
+            languageVersion.set(JavaLanguageVersion.of(build_versions.java_version.majorVersion))
+        }
     }
 
     def isKeystoreInfoAvailable = file(KEYSTORE_PATH).exists() && file(KEYSTORE_PROPERTIES_PATH).exists()
